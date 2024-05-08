@@ -8,7 +8,7 @@ const { Server } = require('socket.io');
 const cookieParser = require('cookie-parser'); // Import cookieParser
 const fs = require("node:fs");
 const formidable = require('formidable');
-const {generateToken, addUser, performLogin, setCookieToken} = require("./lib/utilz.js")
+const {generateToken, addUser, performLogin, setCookieToken, setupDB, isTokenValid} = require("./lib/utilz.js")
 const {router} = require("./lib/router.js");
 const app = express();
 const server = http.createServer(app);
@@ -31,10 +31,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 
-app.use(function checkAuthentication(req, res, next) {
+app.use(async function checkAuthentication(req, res, next) {
+    // return next();
     // if (req.url != "/chat") return next();
-    if (req.url == "/chat" && !req.cookies.utoken) {
-        return res.redirect('/login');
+
+    if (req.url == "/chat" && !!req.cookies.utoken) {
+        const isValid = await isTokenValid(req.cookies.utoken);
+        if (!isValid) {
+            if(__isDev__) console.log("authentication failed")
+            return res.redirect('/login');
+        }
     }
     next();
 });
@@ -77,4 +83,5 @@ const port = process.env.PORT || 3000;
 
 server.listen(port, () => {
     console.log(`Server listening on port http://localhost:${port}\n'${__isDev__ ? "DEVELOPMENT":"PRODUCTION"}' MODE`);
+    setupDB();
 });

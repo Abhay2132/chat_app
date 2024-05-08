@@ -3,6 +3,5 @@ CREATE TABLE user_login_tokens (
   user_id INT NOT NULL,
   token VARCHAR(255) NOT NULL UNIQUE,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  expires_at DATETIME NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users(id)
-);
+)
