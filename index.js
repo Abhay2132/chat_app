@@ -35,8 +35,12 @@ app.use(async function checkAuthentication(req, res, next) {
     // return next();
     // if (req.url != "/chat") return next();
 
-    if (req.url == "/chat" && !!req.cookies.utoken) {
-        const isValid = await isTokenValid(req.cookies.utoken);
+    if (req.url == "/chat") {
+        let isValid = false;
+        if(!!req.cookies.utoken){
+            isValid = await isTokenValid(req.cookies.utoken);
+        }
+
         if (!isValid) {
             if(__isDev__) console.log("authentication failed")
             return res.redirect('/login');
