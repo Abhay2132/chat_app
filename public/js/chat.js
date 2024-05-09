@@ -1,4 +1,4 @@
-import { friends, renderUsers , $, search_friends, search_user, data as _data_, appendMessageOnView, postData, data, } from "./utilz.js";
+import { friends, renderUsers , $, search_friends, search_user, data as _data_, appendMessageOnView, postData, data, appendChat, } from "./utilz.js";
 
 $("#mp-search-input").addEventListener("input", e => {
     let value = e.target.value.trim();
@@ -22,6 +22,7 @@ socket.on("message", (data)=>{
         appendMessageOnView({body, type})
     }
     console.log("recieved message : ", data);
+    appendChat({chatid: _data_.activeUser.username, sender:_data_.activeUser.username, body})
 });
 
 
@@ -33,6 +34,7 @@ function sendMessage(socket){
     chat_input.value = "";
     const b_send = $("#b_send");
     socket.emit("message", {sender: _data_.username, receiver: _data_.activeUser.username, body:msg, sendat: Date.now() })
+    appendChat({chatid: _data_.activeUser.username, sender:_data_.username, body:msg})
 }
 
 $("#b_send").addEventListener("click", e => sendMessage(socket));

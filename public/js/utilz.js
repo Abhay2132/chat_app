@@ -96,9 +96,9 @@ export function search_friends(search_str) {
     renderUsers(friends_founded);
 }
 
-function loadChat(username){
-    const chat = localStorage.getItem("chat-"+username);
-    
+function createMessage(message){
+    let {body="", type="me" } = message;
+    return `<div class="chat-message" data-type="${type}">${body}</div>`
 }
 
 function setActiveUser({ name , username } = {}) {
@@ -107,6 +107,7 @@ function setActiveUser({ name , username } = {}) {
     $("#username-box").textContent = name
     const chats = loadChat(username);
     $("#chat-box-pannel").setAttribute("data-state", "");
+    loadChat(data.activeUser.username)
 }
 
 window.data = data
@@ -115,9 +116,30 @@ export function appendMessageOnView(message){
     let {body="", type="me" } = message;
     if (body) {
         messages.innerHTML += `<div class="chat-message" data-type="${type}">${body}</div>`
+        messages.scrollTop = messages.scrollHeight;
     }
 }   
 
+export function appendChat(message){
+    let {chatid, sender, body} = message;
+    if(chatid == undefined) return console.error(`chatid not defined in message object`, {message});
+    let chats = localStorage.getItem("chat-"+chatid) || "[]"
+    chats = JSON.parse(chats);
+    chats.push({sender, body});
+    localStorage.setItem("chat-"+chatid, JSON.stringify(chats))
+}
+
+function loadChat(chatid){
+    const chats = JSON.parse(localStorage.getItem("chat-"+chatid)||"[]")
+    const messages = $("#message-box")
+    messages.innerHTML = "";
+
+    for(let message of chats){
+        let {sender, body} = message;
+        let msg = createMessage({body, type: (sender == data.username ? "me" : "you")});
+        messages.innerHTML += msg;
+    }
+}
 
 export async function postData(url, data) {
     try {
