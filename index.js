@@ -18,7 +18,7 @@ const publicDirectoryPath = path.join(__dirname, 'public');
 console.log({publicDirectoryPath})
 // to log every request
 app.use((req, res, next) => {
-    console.log(req.method, req.url)
+    // console.log(req.method, req.url)
     res.on("close", () => {
         console.log(res.statusCode, req.method, req.url)
     })

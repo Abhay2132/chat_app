@@ -16,6 +16,7 @@
     "formidable": "^3.5.1",
     "mysql": "^2.18.1",
     "mysql2-promise": "^0.1.4",
+    "pg": "^8.11.5",
     "socket.io": "^4.7.5"
   }
 }
