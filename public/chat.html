@@ -64,35 +64,40 @@
 
             </div>
         </div>
-        <div id="chat-box-pannel">
-            <div class="user-header">
-                <!-- <span class="material-symbols-outlined">person</span> -->
-                <div class="ui-logo"></div>
-                <div class="username" id="username-box">
-                    user-name
+        <div id="chat-box-pannel" data-state="empty">
+            <div id="chat-box-empty">CHATs will Appear Here...</div>
+            <div id="chat-box-body">
+                <div class="user-header">
+                    <!-- <span class="material-symbols-outlined">person</span> -->
+                    <div class="ui-logo"></div>
+                    <div class="username" id="username-box">
+                        user-name
+                    </div>
                 </div>
-            </div>
-            <div id="chat-body">
-                <!-- <label for="text-area"></label> -->
-                <!-- <textarea name="text-area" id="text-area" cols="30" rows="10"></textarea><br> -->
-                <div id="message-box">
-                    <div class="chat-message">Hi</div>
-                </div>
-                <div class="input-box">
+                <div id="chat-body">
+                    <!-- <label for="text-area"></label> -->
+                    <!-- <textarea name="text-area" id="text-area" cols="30" rows="10"></textarea><br> -->
+                    <div id="message-box">
+                        <!-- <div class="chat-message">Hi</div>
+                        <div class="chat-message">Hi</div> -->
+                    </div>
+                    <div class="input-box">
 
-                    <label for="msg-box"></label>
-                    <input id=chat-input class="message-input" type="text" name="msg-box" placeholder="Type a message">
-                    <button onclick="sendMessage()"> <span class="material-symbols-outlined">send</span>
-                    </button>
-                </div>
+                        <label for="msg-box"></label>
+                        <input id=chat-input class="message-input" type="text" name="msg-box"
+                            placeholder="Type a message">
+                        <button id="b_send"> <span class="material-symbols-outlined">send</span>
+                        </button>
+                    </div>
 
+                </div>
             </div>
         </div>
 
     </div>
 
 </body>
-
+<script src="/socket.io/socket.io.js"></script>
 <script src="js/chat.js" type="module"></script>
 
 </html>

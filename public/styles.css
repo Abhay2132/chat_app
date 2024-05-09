@@ -150,7 +150,7 @@ body {
     width: calc(100% - 350px);
     border: 1px solid;
     height: 100vh;
-    background-color: rgb(203, 203, 203);
+    /* background-color: rgb(203, 203, 203); */
 }
 
 #user-cart {
@@ -272,6 +272,30 @@ body {
     width: fit-content;
     /* position: absolute;
     right: 10px; */
-    margin-left: auto;
     margin-top: 10px;
+}
+
+.chat-message[data-type=you]{
+    margin-left: 0;
+}
+
+.chat-message[data-type=me]{
+    margin-left:auto;
+}
+
+#chat-box-empty{
+    display:none;
+}
+
+#chat-box-pannel[data-state="empty"] > #chat-box-empty{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    /* background-color: green; */
+    height: 100vh;
+}
+
+#chat-box-pannel[data-state="empty"] > #chat-box-body{
+    display: none;
 }

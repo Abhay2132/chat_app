@@ -124,7 +124,7 @@
         <div id="login-box">
             <main class="form-signin w-100 m-auto">
                 <form action="/login" method="post">
-                    <img class="mb-4" src="img\images (1).png       " alt="" width="72" height="57">
+                    <!-- <img class="mb-4" src="img\images (1).png       " alt="" width="72" height="57"> -->
                     <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
                     <div class="form-floating">
@@ -152,4 +152,8 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 </body>
+<script>
+    // reset username on logout
+    localStorage.setItem("username", "");
+</script>
 </html>

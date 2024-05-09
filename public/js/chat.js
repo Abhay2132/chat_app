@@ -1,167 +1,52 @@
+import { friends, renderUsers , $, search_friends, search_user, data as _data_, appendMessageOnView, postData, data, } from "./utilz.js";
 
-const input = document.querySelector(".message-input")
-const messages = document.querySelector("#message-box")
-function sendMessage(){
-    let txt  = input.value;
-    if (txt.slice()){
-        messages.innerHTML += `<div class="chat-message">${txt}</div>`
-    }
-}
-
-const friends = [
-    {
-        name:"ABHAY"
-    },
-    {
-        name:"SAURABH"
-    },
-    {
-        name:"SUMO"
-    },
-    {
-        name:"SUMO"
-    },
-    {
-        name:"SUMO"
-    },
-    {
-        name:"SUMO"
-    },
-    {
-        name:"SUMO"
-    },
-    {
-        name:"SUMO"
-    },
-    {
-        name:"SUMO"
-    },
-    {
-        name:"SUMO"
-    },
-]
-
-function createUser(userInfo){
-
-    let {name = false, id=""} = userInfo
-    if(!name){
-        return console.error(`userInfo.name is invalid : '${name}'`)
-    }
-
-    return `
-                <div class="user-info" id="${id}">
-
-                    <div class="ui-logo centered"><span class="material-symbols-outlined">person</span></div>
-                    <div class="ui-name">${name}</div>
-                </div>`
-}
-
-function attachClickToUsers(){
-    for(let user of $("#user-cart").children){
-        user.addEventListener("click", e =>{
-            // e.stopPropagation();
-            let me = e.target;
-            while(me.className != "user-info"){
-                me = me.parentNode; 
-            }
-            let name = me.children[1].textContent;
-            setActiveUser({name})
-        })
-    }
-}
-
-// const userData = (name) => ({name});
-
-function loadUsers(users){
-    const user_cart = $("#user-cart")
-    user_cart.innerHTML = "";
-    for (let user of users){
-        // console.log({user})
-        let {name=false} = user
-        if(!name) {
-            console.log(`USER '${name}' is invalid`)
-            continue;
-        }
-        let userHTML = createUser({name})
-        user_cart.innerHTML += userHTML;
-    }
-    attachClickToUsers();
-}
-
-const $ = q => document.querySelector(q);
-
-function search_friends(search_str){
-    const friends_founded = [];
-    // let search_str = $("")
-    for(let friend of friends){
-        let {name=""} = friend;
-        if(!name) continue;
-        let a=name.toLowerCase().trim()
-        let b = search_str.toLowerCase()
-        if(a.startsWith(b)){
-            friends_founded.push({name});
-        }
-    }
-
-    loadUsers(friends_founded);
-}
-
-$("#mp-search-input").addEventListener("input", e =>{
+$("#mp-search-input").addEventListener("input", e => {
     let value = e.target.value.trim();
-    if($("#new-id").checked){
+    if ($("#new-id").checked) {
         // serach from db
         search_user(value)
-    } else{
+    } else {
         search_friends(value);
     }
-    
 })
 
-function setActiveUser({name}={}){
-    if(!name) return;
-    $("#username-box").textContent=name
-}
+renderUsers([]);
+// const friends = loadFriends();
 
-loadUsers(friends)
+const socket = io();
 
-async function postData(url, data) {
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
-
-    if (!response.ok) {
-      throw new Error(`Network response was not ok: ${response.status}`);
+socket.on("message", (data)=>{
+    const {sender, body, sendat} = data;
+    if(sender == _data_.activeUser.username) {
+        let type =_data_.activeUser.username == sender ? "you" : "me";
+        appendMessageOnView({body, type})
     }
+    console.log("recieved message : ", data);
+});
 
-    const responseData = await response.json();
-    // console.log('POST response:', responseData);
-    return responseData;
-  } catch (error) {
-    console.error('Error:', error);
-  }
+
+function sendMessage(socket){
+    const chat_input = $("#chat-input")
+    let msg = (chat_input.value||"").trim();
+    if(!msg) return;
+    appendMessageOnView({body:msg});
+    chat_input.value = "";
+    const b_send = $("#b_send");
+    socket.emit("message", {sender: _data_.username, receiver: _data_.activeUser.username, body:msg, sendat: Date.now() })
 }
 
-var i = 1;
-function search_user(search_str){
-    i += 1;
-    let myId = i;
-    return new Promise(async (resove, reject)=>{
-        // const search_str = $("#mp-search-input").value.trim()
-        const data = await postData("/api/search", {search_str})
-        // console.log({data})  
-        if(myId != i) return;
-        
-        const {result} = data || {}
+$("#b_send").addEventListener("click", e => sendMessage(socket));
 
-        console.log({result})
-        loadUsers(result);
-        resove();
-        // uplaod current app. state
-
+_data_.username = localStorage.getItem("username")
+if(!_data_.username) {
+    postData("/api/myusername")
+    .then(d =>{
+        _data_.username = d.username;
+        localStorage.setItem("username", _data_.username);
+        socket.emit("username", {username: _data_.username})
     })
+}else{
+    socket.emit("username", {username:_data_.username})
 }
+
+window.data = _data_;

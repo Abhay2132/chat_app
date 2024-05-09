@@ -10,6 +10,7 @@ const fs = require("node:fs");
 const formidable = require('formidable');
 const {generateToken, addUser, performLogin, setCookieToken, setupDB, isTokenValid} = require("./lib/utilz.js")
 const {router} = require("./lib/router.js");
+const { attachSocketDataEvents } = require('./lib/socket.js');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
@@ -64,18 +65,11 @@ app.use((req, res, next) => {
 
 app.use(express.static(publicDirectoryPath));
 
+const userSockets = {}
+
 // Handle socket connections
 io.on('connection', (socket) => {
-    console.log('A user connected!');
-
-    // Handle events from the client
-    socket.on('message', (msg) => {
-        console.log('Message received:', msg);
-
-        // Broadcast the message to all connected clients
-        socket.broadcast.emit('message', msg);
-    });
-
+    attachSocketDataEvents(socket, userSockets);
     // Handle disconnections
     socket.on('disconnect', () => {
         console.log('A user disconnected!');
